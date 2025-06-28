@@ -1,0 +1,27 @@
+[project]
+name = "gerenciador-de-senhas"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Ronald Antonio Oliveira de sousa",email = "ronaldkurouzo@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flet (>=0.28.3,<0.29.0)",
+    "pycryptodome (>=3.23.0,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "gerenciador_de_senhas", from = "src"}]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+pre-commit = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
