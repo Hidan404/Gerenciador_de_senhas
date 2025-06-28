@@ -1,4 +1,4 @@
-from .core import gerar_senha
+from .core import gerador_senhas
 from .storage import salvar_json, carregar_json
 from .crypto_utils import criptografar_dados, descriptografar_dados
 import flet as ft
@@ -16,11 +16,11 @@ def main(page: ft.Page):
     campo_site = ft.TextField(label="Digite sua senha", width=300)
 
 
-    msg = ft.Text()
+    
     msg_texto = ft.Text()
 
     botao_gerar = ft.ElevatedButton(text="Gerar Senha", on_click=adicionar_senha)
-    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Senhas", on_click=descriptografar_arquivo_csv)
+    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Senhas", on_click=descriptografar_dados)
     def adicionar_senha(e):
         senha = campo_senha.value
         site = campo_site.value
@@ -88,7 +88,7 @@ def main(page: ft.Page):
     ])
 
     botoes2 = ft.Row([
-        ft.ElevatedButton(text="Salvar Senhas", on_click=criptograr_arquivo_csv),
+        ft.ElevatedButton(text="Salvar Senhas", on_click=criptografar_dados),
         botao_descriptografar
     ], 
         alignment=ft.MainAxisAlignment.CENTER,
@@ -106,5 +106,5 @@ def main(page: ft.Page):
     page.update()
 
 
-ft.app(target=main)        
+      
     

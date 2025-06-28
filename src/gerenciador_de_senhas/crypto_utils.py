@@ -15,3 +15,6 @@ def descriptografar_dados(dados_encriptados, chave):
     cipher = AES.new(chave, AES.MODE_CBC, iv)
     dados_padded = cipher.decrypt(dados_encriptados[AES.block_size:])
     return unpad(dados_padded, AES.block_size).decode()
+
+def gerar_chave():
+    return get_random_bytes(16) 
