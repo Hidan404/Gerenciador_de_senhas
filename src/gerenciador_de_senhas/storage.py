@@ -61,3 +61,21 @@ def listar_senhas():
     finally:
         cursor.close()
         conn.close()
+
+def deletar_senha(site: str):
+    """Deleta uma senha associada a um site do banco de dados."""
+    conn = conectar()
+    if conn is None:
+        return
+
+    try:
+        cursor = conn.cursor()
+        query = "DELETE FROM senhas WHERE site = %s"
+        cursor.execute(query, (site,))
+        conn.commit()
+        print(f"[✓] Senha para '{site}' deletada com sucesso.")
+    except Error as e:
+        print(f"[!] Erro ao deletar senha: {e}")
+    finally:
+        cursor.close()
+        conn.close()        

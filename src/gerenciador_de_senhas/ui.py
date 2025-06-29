@@ -3,6 +3,7 @@ from .storage import salvar_senha, listar_senhas
 from .crypto_utils import criptografar_dados, descriptografar_dados, gerar_chave
 import flet as ft
 import asyncio
+from .storage import deletar_senha
 
 
 def main(page: ft.Page):
@@ -42,10 +43,21 @@ def main(page: ft.Page):
         page.update()
 
     def carregar_senhas():
-        senhas = listar_senhas()
-        for site, senha_criptografada in senhas:
+        lista_senhas.controls.clear()
+        for site, senha_criptografada in listar_senhas():
             senha_descriptografada = descriptografar_dados(senha_criptografada, gerar_chave())
-            lista_senhas.controls.append(ft.Text(f"🔐 {site}: {senha_descriptografada}"))
+            
+            def excluir(site=site):
+                deletar_senha(site)
+                carregar_senhas()
+                page.update()
+
+            linha = ft.Row([
+                ft.Text(f"🔐 {site.strip()}: {senha_descriptografada.strip()}", selectable=True, expand=True),
+                ft.IconButton(icon=ft.icons.DELETE, tooltip="Excluir", on_click=lambda e, s=site: excluir(s))
+            ])
+
+            lista_senhas.controls.append(linha)
 
     subtitulo = ft.ListView(
         controls=[
