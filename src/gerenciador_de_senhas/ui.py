@@ -1,45 +1,18 @@
 from .core import gerador_senhas
-from .storage import salvar_json, carregar_json
+from .storage import salvar_senha, listar_senhas
 from .crypto_utils import criptografar_dados, descriptografar_dados
 import flet as ft
 import asyncio
-import json
-import os
+
 
 def main(page: ft.Page):
     page.title = "Gerenciador de Senhas"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-
     campo_senha = ft.TextField(label="Senha Gerada", width=300)
-    campo_site = ft.TextField(label="Digite sua senha", width=300)
-
-
-    
+    campo_site = ft.TextField(label="Digite o nome do site", width=300)
     msg_texto = ft.Text()
-
-    botao_gerar = ft.ElevatedButton(text="Gerar Senha", on_click=adicionar_senha)
-    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Senhas", on_click=descriptografar_dados)
-    def adicionar_senha(e):
-        senha = campo_senha.value
-        site = campo_site.value
-
-        if senha and site:
-            page.add(ft.Text(f"Senha para {site}:" + f"\t Senha: {senha}"))
-            salvar_json(senha, site)
-            lista_senhas.controls.append(ft.Text(f"Senha para {site}:" + f"\t Senha: {senha}"))
-            lista_senhas.update()
-            campo_senha.value = ""
-            campo_site.value = ""
-            campo_senha.focus()
-            campo_senha.update()
-            campo_site.update()
-
-    async def limpar_msg_apos_delay():
-        await asyncio.sleep(5)
-        msg_texto.value = ""
-        page.update()
 
     lista_senhas = ft.Column(
         spacing=5,
@@ -49,23 +22,32 @@ def main(page: ft.Page):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
 
+    def adicionar_senha(e):
+        senha = campo_senha.value
+        site = campo_site.value
 
-    try:
-        if os.path.exists("My_Pass/senhas.json"):
-            with open("My_Pass/senhas.json", "r") as f:
-                dados = json.load(f)
-                for site, senha in dados.items():
-                    lista_senhas.controls.append(
-                        ft.Text(f"🔒 {site.strip()}: {senha.strip()}", selectable=True)
-                    )
-    except Exception as e:
-        print(f"Erro ao carregar senhas: {e}")
+        if senha and site:
+            salvar_senha(site, senha)  # Salva no banco
+            lista_senhas.controls.append(ft.Text(f"🔐 {site}: {senha}"))
+            campo_senha.value = ""
+            campo_site.value = ""
+            campo_senha.focus()
+            lista_senhas.update()
+            page.update()
 
+    async def limpar_msg_apos_delay():
+        await asyncio.sleep(5)
+        msg_texto.value = ""
+        page.update()
+
+    def carregar_senhas():
+        senhas = listar_senhas()
+        for site, senha in senhas:
+            lista_senhas.controls.append(ft.Text(f"🔐 {site.strip()}: {senha.strip()}", selectable=True))
 
     subtitulo = ft.ListView(
         controls=[
-            ft.Text("Gerenciador de Senhas", size=30, weight=ft.FontWeight.BOLD, color=ft.colors.RED_900),
-            
+            ft.Text("Gerenciador de Senhas", size=30, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_800),
         ],
         width=400,
         height=100,
@@ -74,27 +56,16 @@ def main(page: ft.Page):
         auto_scroll=False
     )
 
+    botao_gerar = ft.ElevatedButton(text="Gerar Senha", on_click=lambda e: campo_senha.__setattr__('value', gerador_senhas()))
+    botao_adicionar = ft.ElevatedButton(text="Adicionar Senha", on_click=adicionar_senha)
+    botao_salvar = ft.ElevatedButton(text="Criptografar Dados", on_click=criptografar_dados)
+    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Dados", on_click=descriptografar_dados)
 
-    botoes1 = ft.Row([
-        botao_gerar,
-        ft.ElevatedButton(text="Adicionar Senha", on_click=adicionar_senha)
-    ],
-        alignment=ft.MainAxisAlignment.CENTER,
-        spacing=20
-    )    
-    layout = ft.Column([
-        campo_site,
-        campo_senha,
-    ])
+    botoes1 = ft.Row([botao_gerar, botao_adicionar], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
+    botoes2 = ft.Row([botao_salvar, botao_descriptografar], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
 
-    botoes2 = ft.Row([
-        ft.ElevatedButton(text="Salvar Senhas", on_click=criptografar_dados),
-        botao_descriptografar
-    ], 
-        alignment=ft.MainAxisAlignment.CENTER,
-        spacing=20
-        
-    )
+    layout = ft.Column([campo_site, campo_senha])
+
     page.add(subtitulo)
     page.add(ft.Container(height=10))
     page.add(layout)
@@ -103,8 +74,6 @@ def main(page: ft.Page):
     page.add(ft.Container(height=20))
     page.add(botoes2)
     page.add(lista_senhas)
+
+    carregar_senhas()
     page.update()
-
-
-      
-    

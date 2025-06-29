@@ -4,6 +4,11 @@ from mysql.connector import Error
 from dotenv import load_dotenv
 import os
 
+
+load_dotenv()
+print("[DEBUG] USUÁRIO MYSQL:", os.getenv("DB_USER"))
+print("[DEBUG] SENHA MYSQL:", os.getenv("DB_PASSWORD"))
+
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
     "user": os.getenv("DB_USER"),
