@@ -1,6 +1,6 @@
 from .core import gerador_senhas
 from .storage import salvar_senha, listar_senhas
-from .crypto_utils import criptografar_dados, descriptografar_dados
+from .crypto_utils import criptografar_dados, descriptografar_dados, gerar_chave
 import flet as ft
 import asyncio
 
@@ -27,7 +27,8 @@ def main(page: ft.Page):
         site = campo_site.value
 
         if senha and site:
-            salvar_senha(site, senha)  # Salva no banco
+            senha_criptografada = criptografar_dados(senha, gerar_chave())
+            salvar_senha(site, senha_criptografada)  
             lista_senhas.controls.append(ft.Text(f"🔐 {site}: {senha}"))
             campo_senha.value = ""
             campo_site.value = ""
@@ -42,8 +43,9 @@ def main(page: ft.Page):
 
     def carregar_senhas():
         senhas = listar_senhas()
-        for site, senha in senhas:
-            lista_senhas.controls.append(ft.Text(f"🔐 {site.strip()}: {senha.strip()}", selectable=True))
+        for site, senha_criptografada in senhas:
+            senha_descriptografada = descriptografar_dados(senha_criptografada, gerar_chave())
+            lista_senhas.controls.append(ft.Text(f"🔐 {site}: {senha_descriptografada}"))
 
     subtitulo = ft.ListView(
         controls=[
