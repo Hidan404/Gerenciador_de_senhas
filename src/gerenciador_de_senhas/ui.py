@@ -54,10 +54,29 @@ def main(page: ft.Page):
 
             linha = ft.Row([
                 ft.Text(f"🔐 {site.strip()}: {senha_descriptografada.strip()}", selectable=True, expand=True),
-                ft.IconButton(icon=ft.icons.DELETE, tooltip="Excluir", on_click=lambda e, s=site: excluir(s))
+                ft.IconButton(icon=ft.Icons.DELETE, tooltip="Excluir", on_click=lambda e, s=site: excluir(s))
             ])
 
             lista_senhas.controls.append(linha)
+
+    def acao_criptografar(e):
+        senha = campo_senha.value
+        senha_segura = criptografar_dados(senha, gerar_chave())
+        print(senha_segura)        
+        msg_texto.value = "Dados criptografados com sucesso!"
+        page.add(msg_texto)
+        page.update()
+        asyncio.run(limpar_msg_apos_delay())
+
+    def acao_descriptografar(e):
+        senha = campo_senha.value
+        senha_descriptografada = descriptografar_dados(senha, gerar_chave())
+        print(senha_descriptografada)
+        msg_texto.value = "Dados descriptografados com sucesso!"
+        page.add(msg_texto)
+        page.update()
+        asyncio.run(limpar_msg_apos_delay())    
+
 
     subtitulo = ft.ListView(
         controls=[
@@ -72,8 +91,8 @@ def main(page: ft.Page):
 
     botao_gerar = ft.ElevatedButton(text="Gerar Senha", on_click=lambda e: campo_senha.__setattr__('value', gerador_senhas()))
     botao_adicionar = ft.ElevatedButton(text="Adicionar Senha", on_click=adicionar_senha)
-    botao_salvar = ft.ElevatedButton(text="Criptografar Dados", on_click=criptografar_dados)
-    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Dados", on_click=descriptografar_dados)
+    botao_salvar = ft.ElevatedButton(text="Criptografar Dados", on_click=acao_criptografar)
+    botao_descriptografar = ft.ElevatedButton(text="Descriptografar Dados", on_click=acao_descriptografar)
 
     botoes1 = ft.Row([botao_gerar, botao_adicionar], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
     botoes2 = ft.Row([botao_salvar, botao_descriptografar], alignment=ft.MainAxisAlignment.CENTER, spacing=20)

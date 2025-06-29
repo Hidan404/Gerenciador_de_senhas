@@ -21,20 +21,18 @@ def gerar_chave():
 def criptografar_dados(texto: str, chave: bytes) -> str:
     cipher = AES.new(chave, AES.MODE_CBC)
     iv = cipher.iv
-    dados = pad(texto.encode(), AES.block_size)
-    cifrado = cipher.encrypt(dados)
-
-    # Retorna IV + ciphertext codificados em base64
+    cifrado = cipher.encrypt(pad(texto.encode(), AES.block_size))
     return base64.b64encode(iv + cifrado).decode()
 
 
 def descriptografar_dados(dados_encriptados: str, chave: bytes) -> str:
     try:
         dados = base64.b64decode(dados_encriptados)
-        iv = dados[:16]
-        ciphertext = dados[16:]
+        iv = dados[:16]                      # <- primeiros 16 bytes = IV
+        ciphertext = dados[16:]              # <- resto = dados criptografados
         cipher = AES.new(chave, AES.MODE_CBC, iv)
-        texto = unpad(cipher.decrypt(ciphertext), AES.block_size)
-        return texto.decode()
+        plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
+        return plaintext.decode()
     except Exception as e:
         return f"<erro: {str(e)}>"
+
