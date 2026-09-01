@@ -44,5 +44,5 @@ class SaveFile:
         self.save_data(load_data)
 
 
-teste = SaveFile(Arquivo("teste", "123"), "teste.json")
-teste.append_data()        
+#teste = SaveFile(Arquivo("teste", "123"), "teste.json")
+#teste.append_data()        

@@ -34,8 +34,10 @@ class GenerateKey:
             self.save_key()
         else:
             self.load_key()
-            return self.key
-            print("Chave carregada com sucesso!")
+            print(f"Chave carregada do arquivo: {self.path_key}")
+
+        return self.key
+            
 
 
 #generate_key = GenerateKey()

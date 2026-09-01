@@ -1,0 +1,3 @@
+/gerenciador/data/*
+/gerenciador/model/__pycache__/*
+/gerenciador/data/key.key
